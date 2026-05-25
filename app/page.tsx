@@ -1,77 +1,86 @@
 import { HeroCupcakeScroll } from "./components/hero-cupcake-scroll";
+import { OrderEnquiryForm } from "./components/order-enquiry-form";
 
 const navItems = [
   { label: "Gallery", href: "#gallery" },
   { label: "How to order", href: "#how-to-order" },
 ];
 
-// TODO: Replace Linktree with the direct Treats By Tayjah enquiry form URL when the client provides it.
-const ENQUIRY_URL = "https://linktr.ee/treatsbytayjah";
+const ENQUIRY_URL = "#enquiry";
 
 const galleryItems = [
   {
     label: "Splatter cupcakes",
     src: "/assets/gallery/splatter-cupcakes.png",
     alt: "Black and gold birthday cupcakes in a presentation box",
+    href: "https://www.instagram.com/p/DWymlUSCFvC/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==",
   },
   {
     label: "Floral 25 bento cake",
     src: "/assets/gallery/floral-25-bento-cake.png",
     alt: "Cream bento cake with pink and ivory floral detail and number 25",
+    href: "https://www.instagram.com/p/DXGlk75iEP4/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==",
   },
   {
     label: "Bento boxes",
     src: "/assets/gallery/birthday-bento-box.png",
     alt: "Black and grey birthday bento cake box with matching cupcakes",
+    href: "https://www.instagram.com/p/DXL_S02CCUj/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==",
   },
   {
     label: "Sheet cakes",
     src: "/assets/gallery/blue-congratulations-sheet-cake.png",
     alt: "Blue and cream congratulations sheet cake with decorative border",
+    href: "https://www.instagram.com/p/DXY16JLCA_Y/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==",
   },
   {
     label: "Cupcake bouquet",
     src: "/assets/gallery/cupcake-bouquet.png",
     alt: "Yellow and white floral cupcake bouquet wrapped with ribbon",
+    href: "https://www.instagram.com/p/DXd1NI-iBHF/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==",
   },
   {
     label: "Cakesicles",
     src: "/assets/gallery/pink-cakesicles.png",
     alt: "Pink and gold cakesicles tied with ribbon in a gift box",
+    href: "https://www.instagram.com/p/DXv0hDiCPar/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==",
   },
   {
     label: "Anniversary bento cake",
     src: "/assets/gallery/anniversary-bento-cake.png",
     alt: "Anniversary bento cake with matching mum and dad cupcakes",
+    href: "https://www.instagram.com/p/DX8uOeFiNVU/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==",
   },
   {
     label: "Bento cake",
     src: "/assets/gallery/twenty-three-bento-cake.png",
     alt: "Pink bento cake with matching cupcakes and butterfly decorations",
+    href: "https://www.instagram.com/p/DYB4qfECNZJ/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==",
   },
   {
     label: "Princess cake",
     src: "/assets/gallery/princess-cake.png",
     alt: "Pink princess celebration cake with gold castle topper",
+    href: "https://www.instagram.com/p/DYMO9-tCBkT/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==",
   },
 ];
 
 const orderSteps = [
   {
-    title: "Share your idea",
-    text: "Send your date, occasion, product type, quantity, colours, theme and any inspiration.",
+    title: "Fill in the enquiry form",
+    text: "Start with your name, phone number or Instagram, what you would like to order and the date you need it for.",
   },
   {
-    title: "Confirm the details",
-    text: "Availability, flavour options, sizing and collection or delivery details are discussed during enquiry.",
+    title: "Add your order details",
+    text: "Share quantity or servings, occasion, flavour ideas, decoration, colours, theme and any extra notes.",
   },
   {
-    title: "Secure your date",
-    text: "Orders are confirmed once details are agreed and the required deposit has been received.",
+    title: "Share practical needs",
+    text: "Choose collection or delivery, add a delivery postcode if needed, and include any dietary or allergen requirements.",
   },
   {
-    title: "Collect or arrange handover",
-    text: "Final collection or delivery details are confirmed directly with you before your celebration.",
+    title: "Wait for confirmation",
+    text: "Treats By Tayjah reviews the enquiry, then confirms availability, pricing and collection or delivery details directly.",
   },
 ];
 
@@ -97,36 +106,75 @@ const faqs = [
   },
 ];
 
-export default function Home() {
+type HomeProps = {
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
+};
+
+export default async function Home({ searchParams }: HomeProps) {
+  const params = await searchParams;
+  const enquirySent = params?.enquiry === "sent";
+
   return (
-    <main>
+    <>
       <Header />
-      <HeroCupcakeScroll />
-      <GalleryPreview />
-      <HowToOrder />
-      <TrustLocation />
-      <FaqPolicies />
-      <FinalEnquiry />
+      <main id="main-content">
+        <HeroCupcakeScroll />
+        <GalleryPreview />
+        <HowToOrder />
+        <TrustLocation />
+        <FaqPolicies />
+        <FinalEnquiry sent={enquirySent} />
+      </main>
       <Footer />
-    </main>
+    </>
   );
 }
 
 function Header() {
+  const mobileMenuScript = `
+(() => {
+  const menu = document.querySelector(".mobile-menu");
+  if (!menu || menu.dataset.ready === "true") return;
+  menu.dataset.ready = "true";
+  const summary = menu.querySelector("summary");
+  const syncState = () => {
+    if (summary) summary.setAttribute("aria-expanded", menu.hasAttribute("open") ? "true" : "false");
+  };
+  syncState();
+  menu.addEventListener("toggle", syncState);
+  menu.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && menu.hasAttribute("open")) {
+      menu.removeAttribute("open");
+      syncState();
+      if (summary) summary.focus();
+    }
+  });
+  menu.querySelectorAll("a").forEach((link) => {
+    link.addEventListener("click", () => {
+      menu.removeAttribute("open");
+      syncState();
+    });
+  });
+})();
+`;
+
   return (
-    <header className="fixed left-0 right-0 top-0 z-50 border-b border-ganache/10 bg-buttercream/88 backdrop-blur-md">
-      <nav className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 md:px-8">
+    <header className="fixed left-0 right-0 top-0 z-50 border-b border-ganache/10 bg-buttercream/90 backdrop-blur-xl">
+      <a className="skip-link" href="#main-content">
+        Skip to main content
+      </a>
+      <nav className="mx-auto flex max-w-7xl items-center justify-between px-5 py-3.5 md:px-8">
         <a
           href="#top"
-          className="font-serif text-xl font-semibold tracking-normal text-ganache focus-ring"
+          className="font-serif text-[1.35rem] font-semibold tracking-normal text-ganache focus-ring"
           aria-label="Treats By Tayjah home"
         >
           Treats By Tayjah
         </a>
-        <div className="hidden items-center gap-7 md:flex">
-          {navItems.map((item) => (
+        <div className="hidden items-center rounded-full border border-ganache/10 bg-porcelain/62 px-2 py-1 shadow-[0_12px_35px_rgb(43_31_26_/_0.06)] md:flex">
+          {[...navItems, { label: "Enquire", href: ENQUIRY_URL }].map((item) => (
             <a
-              className="text-sm font-medium text-ganache/75 transition hover:text-ganache focus-ring"
+              className="rounded-full px-4 py-2 text-sm font-semibold text-ganache/72 transition hover:bg-buttercream hover:text-ganache focus-ring"
               href={item.href}
               key={item.label}
             >
@@ -134,23 +182,25 @@ function Header() {
             </a>
           ))}
         </div>
-        <a
-          className="btn-primary hidden md:inline-flex"
-          href={ENQUIRY_URL}
-          rel="noreferrer"
-          target="_blank"
-        >
-          Start an enquiry
-        </a>
-        <a
-          className="btn-primary px-4 py-3 text-sm md:hidden"
-          href={ENQUIRY_URL}
-          rel="noreferrer"
-          target="_blank"
-        >
-          Enquire
-        </a>
+        <details className="mobile-menu relative md:hidden">
+          <summary
+            aria-expanded="false"
+            className="focus-ring flex h-11 w-11 cursor-pointer list-none items-center justify-center rounded-full border border-ganache/12 bg-porcelain/80 text-ganache shadow-[0_12px_30px_rgb(43_31_26_/_0.08)]"
+          >
+            <span className="sr-only">Open menu</span>
+            <span aria-hidden="true" className="mobile-menu-icon" />
+          </summary>
+          <div className="mobile-menu-panel">
+            <a href="#gallery">Gallery</a>
+            <a href="#how-to-order">How to order</a>
+            <a href="#enquiry">Start an enquiry</a>
+            <a href="https://www.instagram.com/treatsbytayjah/" rel="noreferrer" target="_blank">
+              Instagram
+            </a>
+          </div>
+        </details>
       </nav>
+      <script dangerouslySetInnerHTML={{ __html: mobileMenuScript }} />
     </header>
   );
 }
@@ -190,9 +240,13 @@ function GalleryPreview() {
         />
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {galleryItems.map((item, index) => (
-            <figure
-              className="gallery-tile group"
+            <a
+              aria-label={`View ${item.label} on Instagram`}
+              className="gallery-tile group focus-ring"
+              href={item.href}
               key={item.label}
+              rel="noreferrer"
+              target="_blank"
             >
               <img
                 alt={item.alt}
@@ -200,16 +254,14 @@ function GalleryPreview() {
                 loading="lazy"
                 src={item.src}
               />
-              <figcaption>{item.label}</figcaption>
-            </figure>
+              <span>{item.label}</span>
+            </a>
           ))}
         </div>
         <div className="mt-9 text-center">
           <a
             className="btn-secondary"
             href={ENQUIRY_URL}
-            rel="noreferrer"
-            target="_blank"
           >
             Ask about a custom order
           </a>
@@ -225,8 +277,8 @@ function HowToOrder() {
       <div className="mx-auto max-w-7xl px-5 md:px-8">
         <SectionHeader
           eyebrow="How to order"
-          title="How your order comes together"
-          text="A calm enquiry process for custom work, with availability and details confirmed directly before booking."
+          title="Start with the enquiry form"
+          text="The form gathers the details needed to check availability and shape your custom order before anything is confirmed."
         />
         <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
           {orderSteps.map((step, index) => (
@@ -256,7 +308,7 @@ function TrustLocation() {
             Local and enquiry-led
           </p>
           <h2 className="mt-4 font-serif text-3xl leading-tight md:text-5xl">
-            Based in Manchester M14, made for celebrations with a personal touch.
+            Based in Manchester, made for celebrations with a personal touch.
           </h2>
           <p className="mt-6 max-w-2xl text-base leading-8 text-porcelain/78">
             The website keeps ordering clear without publishing a private address
@@ -304,37 +356,28 @@ function FaqPolicies() {
   );
 }
 
-function FinalEnquiry() {
+function FinalEnquiry({ sent }: { sent: boolean }) {
   return (
     <section id="enquiry" className="bg-porcelain py-16 md:py-24">
-      <div className="mx-auto max-w-4xl px-5 text-center md:px-8">
-        <p className="text-xs font-semibold uppercase tracking-[0.22em] text-raspberry">
-          Start your enquiry
-        </p>
-        <h2 className="mt-4 font-serif text-4xl leading-tight text-ganache md:text-6xl">
-          Ready to plan your treats?
-        </h2>
-        <p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-ganache/70 md:text-lg">
-          Send your date, occasion and inspiration, and Treats By Tayjah will come
-          back to you with availability and next steps.
-        </p>
-        <div className="mx-auto mt-8 grid max-w-2xl gap-3 rounded-card border border-ganache/10 bg-buttercream p-5 text-left text-sm leading-7 text-ganache/72 md:p-7">
-          <p className="font-semibold text-ganache">Helpful details to include:</p>
-          <p>Date, occasion, product type, quantity, colours, theme, flavour preferences and any inspiration images.</p>
+      <div className="mx-auto grid max-w-7xl gap-10 px-5 md:px-8 lg:grid-cols-[0.82fr_1.18fr] lg:items-start">
+        <div className="lg:sticky lg:top-28">
+          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-raspberry">
+            Start your enquiry
+          </p>
+          <h2 className="mt-4 font-serif text-4xl leading-tight text-ganache md:text-6xl">
+            Ready to plan your treats?
+          </h2>
+          <p className="mt-5 max-w-xl text-base leading-8 text-ganache/70 md:text-lg">
+            Send your date, occasion and inspiration, and Treats By Tayjah will
+            come back to you with availability and next steps.
+          </p>
+          <div className="mt-8 grid gap-3 rounded-card border border-ganache/10 bg-buttercream p-5 text-sm leading-7 text-ganache/72 md:p-7">
+            <p className="font-semibold text-ganache">Helpful details to include:</p>
+            <p>Date, occasion, product type, quantity, colours, theme, flavour preferences and any inspiration images.</p>
+            <p>Please share any dietary or allergen requirements when enquiring so the business can advise before confirming your order.</p>
+          </div>
         </div>
-        <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-          <a
-            className="btn-primary"
-            href={ENQUIRY_URL}
-            rel="noreferrer"
-            target="_blank"
-          >
-            Open enquiry links
-          </a>
-          <a className="btn-secondary" href="#gallery">
-            View recent bakes
-          </a>
-        </div>
+        <OrderEnquiryForm sent={sent} />
       </div>
     </section>
   );
@@ -347,7 +390,7 @@ function Footer() {
         <div>
           <p className="font-serif text-3xl">Treats By Tayjah</p>
           <p className="mt-3 max-w-xl text-sm leading-7 text-porcelain/70">
-            Treats That Taste As Good As They Look. Based in Manchester M14.
+            Treats That Taste As Good As They Look. Based in Manchester.
             Availability, collection and delivery details are confirmed during enquiry.
           </p>
         </div>
